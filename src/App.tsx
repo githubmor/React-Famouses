@@ -1,21 +1,24 @@
 import IranMap from "./components/IranMap";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import map from "./components/map-bg.png";
+
+const maxHeight = 3000
+const mapBackgroundHeight = 695
+const getNumber = (y:number)=>{
+    return (y * 21) / (maxHeight-mapBackgroundHeight)
+}
+
 function App() {
-  const [number, setNumber] = useState<number>(1);
-
-  // useEffect(() => {
-  //   const onScroll = () => setNumber(window.pageYOffset);
-  //   // clean up code
-  //   window.removeEventListener("scroll", onScroll);
-  //   window.addEventListener("scroll", onScroll, { passive: true });
-  //   return () => window.removeEventListener("scroll", onScroll);
-  // }, []);
-
-  // console.log(number);
-
+  const [number, setNumber] = useState<number>(getNumber(window.scrollY));
+    useEffect(() => {
+        const colorChange = () => {
+            setNumber(getNumber(window.scrollY));
+        }
+        window.addEventListener("scroll", colorChange);
+        return () => window.removeEventListener("scroll", colorChange);
+    }, []);
   return (
-    <div className="App">
+    <div style={{height:`${maxHeight}px`}} className="App">
       <img style={{ position: "fixed" }} src={map} alt={"sd"} />
       <IranMap num={number} fill={"#1571a2"} />
       <input
@@ -23,7 +26,7 @@ function App() {
           WebkitAppearance: "slider-vertical",
           width: "20px",
           height: "95%",
-          position: "absolute",
+          position: "fixed",
           right: "0",
         }}
         value={number}
